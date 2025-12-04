@@ -23,18 +23,20 @@ enum NotificationStatus {
 
 service Notifications {
 
-// Методы уведомлений
+// API уведомлений
   
   rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse);
   rpc GetNotificationStatus (GetNotificationStatusRequest) returns (GetNotificationStatusResponse);
   rpc SubscribeToUserNotifications (SubscribeToUserNotificationsRequest) returns (stream StreamUserNotifications);
   rpc GetUserNotifications (GetUserNotificationsRequest) returns (GetUserNotificationsResponse);
 
-// Методы шаблонов уведомлений
+// API шаблонов уведомлений
   
   rpc CreateTemplate (CreateTemplateRequest) returns (CreateTemplateResponse);
   rpc GetTemplate (GetTemplateRequest) returns (GetTemplateResponse);
 }
+
+// Сущности API
 
 message Notification {
   int32 notification_id = 1;
@@ -52,6 +54,8 @@ message Template {
   string body = 4;     // Тело (с переменными {{var}})
   NotificationChannel channel = 5;
 }
+
+// Сообщения API
 
 message CreateNotificationRequest {
   int32 user_id = 1;
