@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package notifications;
+
+// ENUMS: канал уведомления и статус уведомления
+
+enum NotificationChannel {
+  ALL = 1;
+  PUSH = 2;
+  SMS = 3;
+  EMAIL = 4;
+}
+
+enum NotificationStatus {
+  PENDING = 1;
+  SEND = 2;
+  READ = 3;
+  FAILED = 4;
+  RETRYING = 5;
+}
+
+// Сам сервис уведомлений
+
+service Notifications {
+
+// Методы уведомлений
+  
+  rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse);
+  rpc GetNotificationStatus (GetNotificationStatusRequest) returns (GetNotificationStatusResponse);
+  rpc SubscribeToUserNotifications (SubscribeToUserNotificationsRequest) returns (stream StreamUserNotifications);
+  rpc GetUserNotifications (GetUserNotificationsRequest) returns (GetUserNotificationsResponse);
+
+// Методы шаблонов уведомлений
+  
+  rpc CreateTemplate (CreateTemplateRequest) returns (CreateTemplateResponse);
+  rpc GetTemplate (GetTemplateRequest) returns (GetTemplateResponse);
+}
+
+message Notification {
+  int32 notification_id = 1;
+  string title = 2;
+  string body = 3;
+  NotificationStatus status = 4;
+  NotificationChannel channel = 6;
+  int64 timestamp = 5;
+}
+
+message Template {
+  int32 template_id = 1;
+  string name = 2;     // Название шаблона
+  string title = 3;    // Заголовок уведомления
+  string body = 4;     // Тело (с переменными {{var}})
+  NotificationChannel channel = 5;
+}
+
+message CreateNotificationRequest {
+  int32 user_id = 1;
+  NotificationChannel channel = 2;
+  int32 template_id = 3;
+  map<string, string> variables = 4;
+}
+
+message CreateNotificationResponse {
+  int32 notification_id = 1;
+  NotificationStatus status = 2;
+  string message = 3;
+}
+
+message GetNotificationStatusRequest {
+  int32 notification_id = 1;
+}
+
+message GetNotificationStatusResponse {
+  int32 notification_id = 1;
+  NotificationStatus status = 2;
+}
+
+message GetUserNotificationsRequest {
+  int32 user_id = 1;
+}
+
+message GetUserNotificationsResponse {
+  repeated Notification notifications = 1;
+}
+
+message SubscribeToUserNotificationsRequest {
+  int32 user_id = 1;
+}
+
+message StreamUserNotificationsResponse {
+  int32 notification_id = 1;
+  string title = 2;
+  string body = 3;
+  int64 timestamp = 4;
+}
+
+message CreateTemplateRequest {
+  Template template = 1;
+}
+
+message CreateTemplateResponse {
+  int32 templait_id = 1;
+}
+
+message GetTemplateRequest {
+ int32 templait_id = 1;
+}
+
+message GetTemplateResponse {
+  Template template = 1;
+}
