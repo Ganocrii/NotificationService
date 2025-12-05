@@ -29,11 +29,15 @@ service Notifications {
   rpc GetNotificationStatus (GetNotificationStatusRequest) returns (GetNotificationStatusResponse);
   rpc SubscribeToUserNotifications (SubscribeToUserNotificationsRequest) returns (stream StreamUserNotifications);
   rpc GetUserNotifications (GetUserNotificationsRequest) returns (GetUserNotificationsResponse);
+  rpc MarkNotificationRead (MarkNotificationReadRequest) returns (Empty);
+  rpc AckNotificationDelivery (AckNotificationDeliveryRequest) returns (Empty);
 
 // API шаблонов уведомлений
   
-  rpc CreateTemplate (CreateTemplateRequest) returns (CreateTemplateResponse);
-  rpc GetTemplate (GetTemplateRequest) returns (GetTemplateResponse);
+  rpc CreateTemplate (CreateTemplateRequest) returns (Template);
+  rpc GetTemplate (GetTemplateRequest) returns (Template);
+  rpc UpdateTemplate (UpdateTemplateRequest) returns (Template);
+  rpc DeleteTemplate (DeleteTemplateRequest) returns (Empty);
 }
 
 // Сущности API
@@ -98,18 +102,26 @@ message StreamUserNotificationsResponse {
   int64 timestamp = 4;
 }
 
-message CreateTemplateRequest {
-  Template template = 1;
+message MarkNotificationReadRequest {
+ int32 notification_id = 1;
 }
 
-message CreateTemplateResponse {
-  int32 templait_id = 1;
+message AckNotificationDeliveryRequest {
+ int32 notification_id = 1;
+}
+
+message CreateTemplateRequest {
+  Template template = 1;
 }
 
 message GetTemplateRequest {
  int32 templait_id = 1;
 }
 
-message GetTemplateResponse {
+message UpdateTemplateRequest {
   Template template = 1;
+}
+
+message DeleteTemplateRequest {
+ int32 templait_id = 1;
 }
