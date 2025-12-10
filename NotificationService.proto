@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package notifications;
 
+import "google/protobuf/empty.proto";
+
 // ENUMS: канал уведомления и статус уведомления
 
 enum NotificationChannel {
@@ -27,17 +29,17 @@ service Notifications {
   
   rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse);
   rpc GetNotificationStatus (GetNotificationStatusRequest) returns (GetNotificationStatusResponse);
-  rpc SubscribeToUserNotifications (SubscribeToUserNotificationsRequest) returns (stream StreamUserNotifications);
+  rpc SubscribeToUserNotifications (SubscribeToUserNotificationsRequest) returns (stream StreamUserNotificationsResponse);
   rpc GetUserNotifications (GetUserNotificationsRequest) returns (GetUserNotificationsResponse);
-  rpc MarkNotificationRead (MarkNotificationReadRequest) returns (Empty);
-  rpc AckNotificationDelivery (AckNotificationDeliveryRequest) returns (Empty);
+  rpc MarkNotificationRead (MarkNotificationReadRequest) returns (google.protobuf.Empty);
+  rpc AckNotificationDelivery (AckNotificationDeliveryRequest) returns (google.protobuf.Empty);
 
 // API шаблонов уведомлений
   
   rpc CreateTemplate (CreateTemplateRequest) returns (Template);
   rpc GetTemplate (GetTemplateRequest) returns (Template);
   rpc UpdateTemplate (UpdateTemplateRequest) returns (Template);
-  rpc DeleteTemplate (DeleteTemplateRequest) returns (Empty);
+  rpc DeleteTemplate (DeleteTemplateRequest) returns (google.protobuf.Empty);
 }
 
 // Сущности API
@@ -115,7 +117,7 @@ message CreateTemplateRequest {
 }
 
 message GetTemplateRequest {
- int32 templait_id = 1;
+ int32 template_id = 1;
 }
 
 message UpdateTemplateRequest {
@@ -123,5 +125,5 @@ message UpdateTemplateRequest {
 }
 
 message DeleteTemplateRequest {
- int32 templait_id = 1;
+ int32 template_id = 1;
 }
