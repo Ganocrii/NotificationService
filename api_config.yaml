@@ -1,0 +1,15 @@
+type: google.api.Service
+config_version: 3
+name: "*.apigateway.notification_service.cloud.goog"
+title: API Gateway + Cloud Run gRPC
+apis:
+  - name: endpoints.examples.bookstore.Bookstore
+usage:
+  rules:
+  # ListShelves methods can be called without an API Key.
+  - selector: endpoints.examples.bookstore.Bookstore.ListShelves
+    allow_unregistered_calls: true
+backend:
+  rules:
+    - selector: "*"
+      address: grpcs://python-grpc-bookstore-server-HASH-uc.a.run.app
