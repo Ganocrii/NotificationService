@@ -2,11 +2,13 @@ syntax = "proto3";
 
 package notifications;
 
+import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 // ENUMS: канал уведомления и статус уведомления
 
 enum NotificationChannel {
+  CHANNEL_UNSPECIFIED = 0;
   ALL = 1;
   PUSH = 2;
   SMS = 3;
@@ -14,6 +16,7 @@ enum NotificationChannel {
 }
 
 enum NotificationStatus {
+  STATUS_UNSPECIFIED = 0;
   PENDING = 1;
   SEND = 2;
   READ = 3;
@@ -27,19 +30,56 @@ service Notifications {
 
 // API уведомлений
   
-  rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse);
-  rpc GetNotificationStatus (GetNotificationStatusRequest) returns (GetNotificationStatusResponse);
-  rpc SubscribeToUserNotifications (SubscribeToUserNotificationsRequest) returns (stream StreamUserNotificationsResponse);
-  rpc GetUserNotifications (GetUserNotificationsRequest) returns (GetUserNotificationsResponse);
-  rpc MarkNotificationRead (MarkNotificationReadRequest) returns (google.protobuf.Empty);
-  rpc AckNotificationDelivery (AckNotificationDeliveryRequest) returns (google.protobuf.Empty);
+  // Создать (отправить) уведомление для пользователя
+  rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse) {
+    option (google.api.http) = { 
+      post: "/v1/users/{user_id}/notifications" 
+      body: "*"
+    };
+  }
+  // Получить статус уведомления
+  rpc GetNotificationStatus (GetNotificationStatusRequest) returns (GetNotificationStatusResponse) {
+    option (google.api.http) = { get: "/v1/notifications/{notification_id}/status" };
+  }
+  // Установить стрим получения уведомлений для конкретного пользователя
+  rpc SubscribeToUserNotifications (SubscribeToUserNotificationsRequest) returns (stream StreamUserNotificationsResponse); // Тут вопрос возможно ли настроить REST для стрима?
+  // Получить все уведомления для пользователя
+  rpc GetUserNotifications (GetUserNotificationsRequest) returns (GetUserNotificationsResponse) {
+    option (google.api.http) = { get: "/v1/users/{user_id}/notifications" };
+  }
+  // Пометить уведомление как прочитанное (для push уведомлений в приложении)
+  rpc MarkNotificationRead (MarkNotificationReadRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { post: "/v1/notifications/{notification_id}:read" };
+  }
+  // Подтвердить доставку уведомления (для email/смс)
+  rpc AckNotificationDelivery (AckNotificationDeliveryRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { post: "/v1/notifications/{notification_id}:ack"};
+  }
 
 // API шаблонов уведомлений
   
-  rpc CreateTemplate (CreateTemplateRequest) returns (Template);
-  rpc GetTemplate (GetTemplateRequest) returns (Template);
-  rpc UpdateTemplate (UpdateTemplateRequest) returns (Template);
-  rpc DeleteTemplate (DeleteTemplateRequest) returns (google.protobuf.Empty);
+  // Создать новый шаблон
+  rpc CreateTemplate (CreateTemplateRequest) returns (Template) {
+    option (google.api.http) = { 
+      post: "/v1/templates"
+      body: "template"
+    };
+  }
+  // Получить данные шаблона
+  rpc GetTemplate (GetTemplateRequest) returns (Template) {
+    option (google.api.http) = { get: "/v1/templates/{template_id}" };
+  }
+  // Обновить шаблон
+  rpc UpdateTemplate (UpdateTemplateRequest) returns (Template) {
+    option (google.api.http) = { 
+      put: "/v1/templates/{template.template_id}" 
+      body: "template"
+    };
+  }
+  // Удалить шаблон
+  rpc DeleteTemplate (DeleteTemplateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { delete: "/v1/templates/{template_id}" };
+  }
 }
 
 // Сущности API
